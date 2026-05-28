@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, SecretStr
 from decimal import Decimal
+from datetime import datetime
 
 
 class CategoryCreate(BaseModel):
@@ -77,3 +78,19 @@ class UserCreate(BaseModel):
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
+
+class Review(BaseModel):
+    id: int
+    user_id: int
+    product_id: int
+    comment: str
+    comment_date: datetime
+    grade: int
+    is_active: bool
+
+
+class ReviewCreate(BaseModel):
+    product_id: int = Field(...,gt=0,description="product id ")
+    comment: str | None = Field(None,description="product comment")
+    grade : int = Field(...,ge=1,le=5,description="product grade")

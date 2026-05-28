@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from starlette import status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.schemas import Product as ProductSchema, ProductCreate
 from app.models import Product as ProductModel, Category as CategoryModel
@@ -9,7 +8,8 @@ from app.database import get_async_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth import get_current_seller
 from app.models.users import User as UserModel
-
+from app.models.reviews import Review as ReviewModel
+from app.schemas import Review as ReviewSchema
 
 # Создаём маршрутизатор с префиксом и тегом
 router = APIRouter(
@@ -31,7 +31,7 @@ async def get_all_products(db: AsyncSession = Depends(get_async_db)):
 async def create_product(
         product: ProductCreate,
         db: AsyncSession = Depends(get_async_db),
-        current_user : UserModel = Depends(get_current_seller)
+        current_user: UserModel = Depends(get_current_seller)
 ):
     """
     Создаёт новый товар.
@@ -44,7 +44,7 @@ async def create_product(
     if not category_exists:
         raise HTTPException(status_code=400, detail="Category not found or inactive")
 
-    db_product = ProductModel(**product.model_dump(),seller_id=current_user.id)
+    db_product = ProductModel(**product.model_dump(), seller_id=current_user.id)
     db.add(db_product)
     await db.commit()
     await db.refresh(db_product)
@@ -153,3 +153,17 @@ async def delete_product(
     await db.refresh(db_product)
 
     return db_product
+
+
+@router.get("/{product_id}/reviews", response_model=list[ReviewSchema])
+async def get_reviews_by_product_id(product_id: int, db: AsyncSession = Depends(get_async_db)):
+    product = await db.scalar(select(ProductModel).where(ProductModel.id == product_id, ProductModel.is_active == True))
+
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+
+    stmt = select(ReviewModel).where(ReviewModel.product_id == product_id, ReviewModel.is_active == True)
+    result = await db.scalars(stmt)
+    reviews = result.all()
+
+    return reviews
