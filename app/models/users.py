@@ -3,13 +3,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String
 
 
-
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True,index=True,nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     role: Mapped[str] = mapped_column(default="buyer")
 
-    products : Mapped[list["Product"]] = relationship(back_populates="seller")
+    products: Mapped[list["Product"]] = relationship(back_populates="seller")
+    reviews: Mapped[list["Review"]] = relationship(back_populates="user")

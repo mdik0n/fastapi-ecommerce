@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.orm import joinedload
+
 from app.database import get_async_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.reviews import Review as ReviewModel
@@ -27,13 +29,15 @@ async def update_product_rating(db: AsyncSession, product_id: int):
     await db.execute(update(ProductModel).where(ProductModel.id == product_id).values(rating=avg_rating))
 
 
-@router.get("",response_model=list[ReviewSchema])
+@router.get("", response_model=list[ReviewSchema])
 async def get_reviews(db: AsyncSession = Depends(get_async_db)):
     """
         Getting all active reviews
     """
 
-    reviews = (await db.scalars(select(ReviewModel).where(ReviewModel.is_active == True))).all()
+    stmt = select(ReviewModel).options(joinedload(ReviewModel.user), joinedload(ReviewModel.product)).where(
+        ReviewModel.is_active == True)
+    reviews = (await db.scalars(stmt)).all()
 
     return reviews
 

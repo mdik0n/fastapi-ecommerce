@@ -82,8 +82,8 @@ class RefreshTokenRequest(BaseModel):
 
 class Review(BaseModel):
     id: int
-    user_id: int
-    product_id: int
+    user: User
+    product: Product
     comment: str
     comment_date: datetime
     grade: int
@@ -91,6 +91,6 @@ class Review(BaseModel):
 
 
 class ReviewCreate(BaseModel):
-    product_id: int = Field(...,gt=0,description="product id ")
-    comment: str | None = Field(None,description="product comment")
-    grade : int = Field(...,ge=1,le=5,description="product grade")
+    product_id: int = Field(..., gt=0, description="product id ")
+    comment: str | None = Field(None, description="product comment")
+    grade: int = Field(..., ge=1, le=5, description="product grade")

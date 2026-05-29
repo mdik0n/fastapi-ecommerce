@@ -16,3 +16,6 @@ class Review(Base):
     comment_date: Mapped[datetime] = mapped_column(default=datetime.now)
     grade: Mapped[int] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    user : Mapped["User"] = relationship(back_populates="reviews")
+    product : Mapped["Product"] = relationship(back_populates="reviews")
