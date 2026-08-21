@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-DATABASE_URL = "sqlite:///ecommerce_db"
+DATABASE_URL = "sqlite:///ecommerce.db"
 
 engine = create_engine(DATABASE_URL, echo=True, pool_size=5, max_overflow=10, pool_pre_ping=True, pool_timeout=30)
 
