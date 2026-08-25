@@ -6,6 +6,7 @@ from decimal import Decimal
 
 class Product(Base):
     __tablename__ = "products"
+    __table_args__ = {'schema': 'app'}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
@@ -15,6 +16,6 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
+    category_id: Mapped[int] = mapped_column(ForeignKey("app.categories.id"), nullable=False)
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
