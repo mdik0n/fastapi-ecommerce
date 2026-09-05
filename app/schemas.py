@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict, EmailStr, SecretStr
 from typing import Annotated
 from decimal import Decimal
 
@@ -52,16 +52,15 @@ class Product(ProductCreate):
 
 
 class UserCreate(BaseModel):
-    email: Annotated[EmailStr, Field(default="user email")]
-    password: Annotated[str, Field(min_length=9, description="User password (minimum 8 chars)")]
+    email: Annotated[EmailStr, Field(description="user email")]
+    password: Annotated[SecretStr, Field(min_length=8, description="User password (minimum 8 chars)")]
     role: Annotated[str, Field(default="buyer", pattern="^(buyer|seller)$", description="Role : 'buyer' or 'seller'")]
 
 
 class User(BaseModel):
     id: int
     email: EmailStr
-    is_active : bool
+    is_active: bool
     role: str
-
 
     model_config = ConfigDict(from_attributes=True)
