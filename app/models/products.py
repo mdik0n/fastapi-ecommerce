@@ -17,5 +17,7 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     category_id: Mapped[int] = mapped_column(ForeignKey("app.categories.id"), nullable=False)
+    seller_id: Mapped[int] = mapped_column(ForeignKey("app.users.id"), nullable=False)
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
+    user: Mapped["User"] = relationship("User", back_populates="products")
