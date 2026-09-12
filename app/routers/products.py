@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, update, delete, exists
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.models.products import Product as ProductModel
 from app.models.categories import Category as CategoryModel
+from app.models import Review as ReviewModel
 from app.db_depends import get_db
-from app.schemas import Product as ProductSchema, ProductCreate
+from app.schemas import Product as ProductSchema, ProductCreate, Review as ReviewSchema
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db_depends import get_async_db
@@ -133,7 +134,7 @@ async def update_product(product_id: int, product: ProductCreate, db: AsyncSessi
     return db_product
 
 
-@router.delete("/{product_id}",response_model=ProductSchema)
+@router.delete("/{product_id}", response_model=ProductSchema)
 async def delete_product(product_id: int, db: AsyncSession = Depends(get_async_db),
                          current_user: UserModel = Depends(get_current_seller)):
     """
@@ -154,3 +155,20 @@ async def delete_product(product_id: int, db: AsyncSession = Depends(get_async_d
 
     await db.refresh(db_product)  # Для возврата is_active = False
     return db_product
+
+
+@router.get("/{product_id}/reviews/", response_model=list[ReviewSchema])
+async def read_product_reviews(product_id: int, db: AsyncSession = Depends(get_async_db)):
+    db_product = await db.scalar(
+        select(
+            exists().where(ProductModel.id == product_id, ProductModel.is_active)
+        )
+    )
+    if not db_product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+
+    review_stmt = select(ReviewModel).options(selectinload(ReviewModel.user)).where(
+        ReviewModel.product_id == product_id, ReviewModel.is_active)
+    reviews = (await db.scalars(review_stmt)).all()
+
+    return reviews

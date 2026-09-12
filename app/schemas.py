@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, SecretStr
 from typing import Annotated
 from decimal import Decimal
+from datetime import datetime
 
 
 class CategoryCreate(BaseModel):
@@ -54,7 +55,7 @@ class Product(ProductCreate):
 class UserCreate(BaseModel):
     email: Annotated[EmailStr, Field(description="user email")]
     password: Annotated[SecretStr, Field(min_length=8, description="User password (minimum 8 chars)")]
-    role: Annotated[str, Field(default="buyer", pattern="^(buyer|seller)$", description="Role : 'buyer' or 'seller'")]
+    role: Annotated[str, Field(default="buyer", pattern="^(buyer|seller|admin)$", description="Role : 'buyer' or 'seller or 'admin''")]
 
 
 class User(BaseModel):
@@ -68,3 +69,22 @@ class User(BaseModel):
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
+
+
+class Review(BaseModel):
+    id : Annotated[int,Field(default="Review id")]
+    user : Annotated[User,Field("user info")]
+    product_id : Annotated[int,Field("ID of the product")]
+    comment : Annotated[str,Field("Reviews' feedback")]
+    comment_date : Annotated[datetime,Field("Review's created time")]
+    grade : Annotated[int,Field(description="Product's grade")]
+    is_active : Annotated[bool,Field(description="Activity of the review")]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ReviewCreate(BaseModel):
+    product_id :  Annotated[int,Field("ID of the product")]
+    comment : Annotated[str,Field("Reviews' feedback")]
+    grade : Annotated[int,Field(ge=1,le=5,description="Product's grade")]

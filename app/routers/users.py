@@ -64,7 +64,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
 @router.post("/refresh-token")
 async def refresh_token(body: RefreshTokenRequest, db: AsyncSession = Depends(get_async_db)):
     """
-    Updated refresh-token, accepting old refresh-токен in the body.
+    Updated refresh-token, accepting old refresh-token in the body.
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -103,6 +103,5 @@ async def refresh_token(body: RefreshTokenRequest, db: AsyncSession = Depends(ge
     return {
         "refresh_token": new_refresh_token,
         "access_token": new_access_token,
-
         "token_type": "bearer",
     }
