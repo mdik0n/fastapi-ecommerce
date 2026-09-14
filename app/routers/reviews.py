@@ -52,7 +52,7 @@ async def create_review(review: ReviewCreate,
 
     db.add(new_review)
 
-    await db.flush()  # чтобы new_review получил id, без полного коммита
+    await db.flush()  # чтобы new_review попало в бд до коммита
 
     await calculate_grade(db_product, db)
 

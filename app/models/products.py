@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from app.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Boolean, Integer, Text, Numeric, ForeignKey, Float, text
+from sqlalchemy import String, Boolean, Integer, Text, Numeric, ForeignKey, Float, text, DateTime, func
 from decimal import Decimal
 
 
@@ -16,6 +18,8 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     rating: Mapped[float] = mapped_column(Float, default=0.0, server_default=text('0'))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     category_id: Mapped[int] = mapped_column(ForeignKey("app.categories.id"), nullable=False)
     seller_id: Mapped[int] = mapped_column(ForeignKey("app.users.id"), nullable=False)
