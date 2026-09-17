@@ -61,7 +61,6 @@ class ProductList(BaseModel):
     total: int = Field(ge=0, description="Общее количество товаров")
     page: int = Field(ge=1, description="Номер текущей страницы")
     page_size: int = Field(ge=1, description="Количество элементов на странице")
-
     model_config = ConfigDict(from_attributes=True)  # Для чтения из ORM-объектов
 
 
@@ -90,6 +89,7 @@ class ProductsRequest(BaseModel):
     seller_id: int | None = Field(None, description='ID продавца для фильтрации')
     sort_by: ProductSortField = Field(default=ProductSortField.id, description="Поле сортировки")
     sort_dir: SortDir = Field(default=SortDir.asc, description="Направление сортировки")
+    search: str | None = Field(None, min_length=1, description="Поиск по названию товара"),
 
 
 class UserCreate(BaseModel):
