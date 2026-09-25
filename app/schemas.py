@@ -128,3 +128,30 @@ class ReviewCreate(BaseModel):
     product_id: Annotated[int, Field("ID of the product")]
     comment: Annotated[str, Field("Reviews' feedback")]
     grade: Annotated[int, Field(ge=1, le=5, description="Product's grade")]
+
+
+class CartItem(BaseModel):
+    id: Annotated[int, Field(description="Id of the CartItem")]
+    user_id: Annotated[int, Field(description="User id")]
+    product: Annotated[Product, Field(description="product")]
+    quantity: Annotated[int, Field(gt=0, description="quantity of the product")]
+    created_at : Annotated[datetime,Field(description="product added date")]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CartItemCreate(BaseModel):
+    product_id: Annotated[int, Field(description="Product id")]
+    quantity: Annotated[int, Field(gt=0, description="quantity of the product")]
+
+
+class CartItemUpdate(BaseModel):
+    quantity: Annotated[int, Field(gt=0, description="quantity of the product")]
+
+
+class Cart(BaseModel):
+    user_id: Annotated[int, Field(description="User id")]
+    cart_items: Annotated[list[CartItem], Field(description="list of cart item")]
+    total_sum: Annotated[Decimal, Field(description="Total sum of all products")]
+    total_quantity : Annotated[int,Field(description="Total quantity of all products")]
+

@@ -4,6 +4,8 @@ from app.routers import categories
 from app.routers import products
 from app.routers import users
 from app.routers import reviews
+from app.routers import cart
+
 
 app = FastAPI(
     title="FastAPI e-commerce",
@@ -14,6 +16,7 @@ app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(users.router)
 app.include_router(reviews.router)
+app.include_router(cart.router)
 
 
 @app.get("/")

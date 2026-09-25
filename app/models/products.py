@@ -6,6 +6,7 @@ from sqlalchemy import String, Boolean, Integer, Text, Numeric, ForeignKey, Floa
 from decimal import Decimal
 from sqlalchemy.dialects.postgresql import TSVECTOR
 
+from app.models.cart_items import CartItem
 
 
 class Product(Base):
@@ -44,4 +45,4 @@ class Product(Base):
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     seller: Mapped["User"] = relationship("User", back_populates="products")
-
+    cart_items : Mapped[list["CartItem"]]  = relationship(back_populates="product")
