@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status
+from sqlalchemy.orm import selectinload
 
 from app.db_depends import get_async_db
 from app.models import Review as ReviewModel, User as UserModel, Product as ProductModel
@@ -21,7 +22,7 @@ async def calculate_grade(product: ProductModel, db: AsyncSession):
 
 @router.get("/", response_model=list[ReviewSchema])
 async def read_reviews(db: AsyncSession = Depends(get_async_db)):
-    stmt = select(ReviewModel).where(ReviewModel.is_active)
+    stmt = select(ReviewModel).options(selectinload(ReviewModel.user)).where(ReviewModel.is_active)
     reviews = (await db.scalars(stmt)).all()
 
     return reviews

@@ -89,7 +89,7 @@ class ProductsRequest(BaseModel):
     seller_id: int | None = Field(None, description='ID продавца для фильтрации')
     sort_by: ProductSortField = Field(default=ProductSortField.id, description="Поле сортировки")
     sort_dir: SortDir = Field(default=SortDir.asc, description="Направление сортировки")
-    search: str | None = Field(None, min_length=1, description="Поиск по названию товара"),
+    search: str | None = Field(None, min_length=1, description="Поиск по названию товара")
 
 
 class UserCreate(BaseModel):
@@ -135,7 +135,7 @@ class CartItem(BaseModel):
     user_id: Annotated[int, Field(description="User id")]
     product: Annotated[Product, Field(description="product")]
     quantity: Annotated[int, Field(gt=0, description="quantity of the product")]
-    created_at : Annotated[datetime,Field(description="product added date")]
+    created_at: Annotated[datetime, Field(description="product added date")]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -153,5 +153,26 @@ class Cart(BaseModel):
     user_id: Annotated[int, Field(description="User id")]
     cart_items: Annotated[list[CartItem], Field(description="list of cart item")]
     total_sum: Annotated[Decimal, Field(description="Total sum of all products")]
-    total_quantity : Annotated[int,Field(description="Total quantity of all products")]
+    total_quantity: Annotated[int, Field(description="Total quantity of all products")]
 
+
+class OrderItem(BaseModel):
+
+    product: Annotated[Product, Field(description="Product information")]
+    price: Annotated[Decimal, Field(description="Product price")]
+    quantity: Annotated[int, Field(description="Product quantity")]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+from app.models.order import OrderStatus
+
+
+class Order(BaseModel):
+    id: Annotated[int, Field(description="id of the order")]
+    order_items: Annotated[list[OrderItem], Field(description="list of items in the order")]
+    total: Annotated[Decimal, Field(description="total price of order")]
+    status: Annotated[OrderStatus, Field(description="Status of the order")]
+    created_at: Annotated[datetime, Field(description="order created date")]
+
+    model_config = ConfigDict(from_attributes=True)
